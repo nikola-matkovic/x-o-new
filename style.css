@@ -1,0 +1,22 @@
+body {
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    & .container {
+        width: 90vmin;
+        height: 90vmin;
+
+        display: grid;
+        grid-template-columns: repeat(var(--n), 1fr);
+        grid-template-rows: repeat(var(--n), 1fr);
+        font-family: roboto;
+        & > div {
+            border: 4px solid orange;
+
+            display: grid;
+            place-items: center;
+
+            font-size: 2rem;
+        }
+    }
+}
