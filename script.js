@@ -1,12 +1,13 @@
 let gridSize = parseInt(prompt("Enter grid size", 3));
+
 document.documentElement.style.setProperty("--n", gridSize);
+
 const container = document.querySelector(".container");
 container.innerHTML = Array(gridSize * gridSize)
     .fill("<div></div>")
     .join("");
 
 const places = [...container.querySelectorAll("div")];
-
 let current = "";
 let grid = [];
 
@@ -17,14 +18,16 @@ places.forEach((place, index) => {
     place.addEventListener("click", () => handleClick(row, column, index));
 });
 
+const checkForDraw = () => grid.flat().every((e) => e === "X" || e === "O");
+
+const checkArray = (arr) =>
+    arr.every((e) => e === "O") || arr.every((e) => e === "X");
+
 function handleClick(x, y, i) {
     if (grid[x][y] !== 0) return;
 
     places[i].innerHTML = `<div class="${current}"> ${current} </div>`;
-
     grid[x][y] = current;
-
-    console.log(grid);
 
     if (checkForWin()) return endGame("win");
     if (checkForDraw()) return endGame("draw");
@@ -33,34 +36,20 @@ function handleClick(x, y, i) {
 }
 
 function checkForWin() {
-    let results = [];
-
-    for (let i = 0; i < gridSize; i++) results.push(checkArray(grid[i])); // X
-
-    for (let i = 0; i < gridSize; i++)
-        results.push(checkArray(grid.map((arr) => arr[i]))); // Y
-
-    let d1 = []; // Diagonal
-    let d2 = []; // Diagonal
     for (let i = 0; i < gridSize; i++) {
-        d1.push(grid[i][i]);
-        d2.push(grid[i][gridSize - 1 - i]);
+        if (checkArray(grid[i])) return true;
+        if (checkArray(grid.map((arr) => arr[i]))) return true;
     }
 
-    results.push(checkArray(d1));
-    results.push(checkArray(d2));
+    let d1 = grid.map((row, i) => row[i]);
+    let d2 = grid.map((row, i) => row[gridSize - 1 - i]);
 
-    return results.some((result) => result === true);
-}
-
-function checkArray(arr) {
-    return arr.every((e) => e === "O") || arr.every((e) => e === "X");
+    return checkArray(d1) || checkArray(d2);
 }
 
 function endGame(status) {
-    status === "win"
-        ? alert(`Player ${current} just won the game`)
-        : alert("draw");
+    status === "win" && alert(`Player ${current} just won the game`);
+    status === "draw" && alert("draw");
 
     restart();
 }
@@ -72,10 +61,6 @@ function restart() {
         .map(() => Array(gridSize).fill(0));
 
     places.forEach((place) => (place.innerHTML = ""));
-}
-
-function checkForDraw() {
-    return grid.flat().every((e) => e === "X" || e === "O");
 }
 
 restart();
